@@ -1,4 +1,238 @@
----
-title: Welcome to my blog
----
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Patchiia Shop</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f8f8f8; text-align: center; color: #333; margin: 0; padding: 0; }
+header { background: #fff; padding: 15px; font-weight: bold; letter-spacing: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+header img { max-width: 150px; height: auto; display: block; margin: 0 auto; }
+h1 { margin: 17px 0; font-size: 32px; }
+.price { font-size: 49px; font-weight: bold; color: #000; margin-top: 30px; }
+.price-vista 
+  { font-size: 18px; color: #130f0f; margin-top: -50px; display: block; text-align: center; line-height: -50; }
+.price-parcelado {font-size: 18px; color: #444; margin-top: 20px; }
+.product { margin-top: 20px; }
+.product img { max-width: 280px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s ease-in-out; width: 90%; height: auto; }
+.tag { display: inline-block; background: #000; color: #fff; padding: 6px 18px; border-radius: 20px; margin: 5px; font-size: 14px; }
+.tag-condicao { font-size: 16px; padding: 8px 22px; background: #111; }
+select { padding: 10px; font-size: 16px; border-radius: 10px; margin-top: 10px; max-width: 90%; display: block; margin-left: auto; margin-right: auto; text-align-last: center; }
+.colors { margin: 10px 0; }
+.color-btn { display: inline-block; width: 25px; height: 25px; border-radius: 50%; margin: 0 5px; cursor: pointer; border: 1px solid #ccc; transition: transform 0.2s; position: relative; margin-top: 9px; }
+.color-btn:hover { transform: scale(1.2); }
+.color-btn.active { border: 3px solid #000; }
+.color-btn::after { content: attr(data-nome); position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 3px 8px; border-radius: 5px; font-size: 12px; opacity: 0; pointer-events: none; white-space: nowrap; transition: opacity 0.3s ease; }
+.color-btn:hover::after { opacity: 1; }
+.tags-section { margin-top: 15px; }
+.buy-section { margin: 20px 0; padding: 0 15px; }
+.whatsapp-btn { display: block; background: #25D366; color: #fff; padding: 15px 30px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 50px; transition: background 0.3s ease; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); max-width: 350px; margin: 0 auto; margin-top: 40px; }
+.whatsapp-btn:hover { background: #128C7E; }
+.whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px; background-color: #25d366; color: #fff; border-radius: 50%; text-align: center; font-size: 30px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 1000; transition: transform 0.2s ease; }
+.whatsapp-float:hover { transform: scale(1.1); background-color: #128C7E; }
+.whatsapp-float i { margin-top: 15px; }
+footer { background: #222; color: #fff; padding: 20px 15px; width: 100%; box-sizing: border-box; margin-top: 30px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
+footer a { color: #fff; text-decoration: none; margin: 0 10px; font-weight: bold; }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
 
+<header>
+    <img src="https://res.cloudinary.com/ddp8z6xbo/image/upload/v1756407875/20230524_132743_0000-2_1_3_v0xsw1.png" alt="Logo Smart Patchiia Shop">
+</header>
+
+<h1>Inverno de Ofertas</h1>
+
+<select id="seletor" onchange="trocarProduto()"></select>
+
+<h2 id="produto"></h2>
+<p id="descricao"></p>
+
+<div class="product">
+    <img id="imagem" src="img" alt="iPhone">
+</div>
+
+<div class="colors" id="cores"></div> <!-- Botões de cores abaixo da imagem -->
+
+<p class="price" id="preco"></p>
+<p class="price-vista" id="preco-vista"></p>
+
+<label for="parcelas"><br><b>Em caso de parcelamento:</b></label>
+<div style="margin-bottom: 5px;">
+  <select id="parcelas-select" onchange="atualizarValorFinal()"></select>
+</div>
+<p class="price-parcelado" id="valor-total-parcelamento"></p> <!-- valor total -->
+
+<div id="tags-condicao" class="tags-section"></div>
+<div id="tags-brindes" class="tags-section"></div>
+
+<div class="buy-section">
+    <a href="#" id="whatsapp-link" class="whatsapp-btn">COMPRE AGORA PELO WHATSAPP</a>
+</div>
+
+<a href="#" id="whatsapp-float-link" class="whatsapp-float" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+const produtos = [
+    {
+        nome: "iPhone 13 Pro Max",
+        preco: "R$ 3.449,00",
+        descricao: "Com preço congelado!",
+        condicao: ["Semi Novo", "128 GB"],
+        brindes: ["Cabo Apple", "Case Premium", "Película 3D"],
+        cores: [
+            { nome: "Alpine Green", cor: "#006442", imagem: "https://www.apple.com/newsroom/images/product/iphone/standard/Apple-iPhone13-Pro-alpine-green-hero-2up-220308_big_carousel.jpg.large.jpg" },
+            { nome: "Graphite", cor: "#3e3e3e", imagem: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-graphite-select?wid=940&hei=1112&fmt=png-alpha&.v=1645552346275" }
+        ],
+        wpp: "5511978014081"
+    },
+    {
+        nome: "iPhone 14 Pro",
+        preco: "R$ 5.299,00",
+        descricao: "Edição especial com super câmera!",
+        condicao: ["Novo", "256 GB"],
+        brindes: ["Cabo Apple", "Case Premium", "Garantia 90 dias"],
+        cores: [
+            { nome: "Deep Purple", cor: "#4b004f", imagem: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-deeppurple-select?wid=940&hei=1112&fmt=png-alpha&.v=1660744815530" },
+            { nome: "Gold", cor: "#f5e1a4", imagem: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-gold-select?wid=940&hei=1112&fmt=png-alpha&.v=1660750050180" }
+        ],
+        wpp: "5511978014081"
+    },
+  {
+        nome: "iPhone 14 Pro Max",
+        preco: "R$ 5.999,00",
+        descricao: "Edição especial com super câmera!",
+        condicao: ["Novo", "128 GB"],
+        brindes: ["Cabo Apple", "Case Premium", "Garantia 90 dias"],
+        cores: [
+            { nome: "Deep Purple", cor: "#4b004f", imagem: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-deeppurple-select?wid=940&hei=1112&fmt=png-alpha&.v=1660744815530" },
+            { nome: "Gold", cor: "#f5e1a4", imagem: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-gold-select?wid=940&hei=1112&fmt=png-alpha&.v=1660750050180" }
+        ],
+        wpp: "5511978014081"
+    }
+  
+];
+
+// Ordenar alfabeticamente
+produtos.sort((a,b) => a.nome.localeCompare(b.nome));
+
+const seletor = document.getElementById("seletor");
+const parcelasSelect = document.getElementById("parcelas-select");
+
+// Taxas
+const taxaVista = 3.27; // 1x
+const taxaIntermediacao = 2.71; // parcela fixa
+const taxaMensal = 1.678; // ao mês
+
+produtos.forEach((p, index) => {
+    let option = document.createElement("option");
+    option.value = index;
+    option.text = p.nome;
+    seletor.add(option);
+});
+
+let produtoAtual = produtos[0];
+
+function calcularParcelasComJuros(preco, parcelas) {
+    let valor = parseFloat(preco.replace("R$", "").replace(/\./g, "").replace(",", "."));
+    let valorFinal;
+
+    if (parcelas == 1) {
+        valorFinal = valor * (1 + taxaVista / 100);
+    } else {
+        let juros = taxaMensal / 100;
+        let intermed = taxaIntermediacao / 100;
+        valorFinal = (valor * (1 + intermed)) * (juros / (1 - Math.pow(1 + juros, -parcelas)));
+    }
+
+    return valorFinal;
+}
+
+function atualizarParcelasOptions() {
+    parcelasSelect.innerHTML = "";
+    for (let i = 1; i <= 18; i++) {
+        let valorParcela = calcularParcelasComJuros(produtoAtual.preco, i);
+        let option = document.createElement("option");
+        option.value = i;
+        option.text = `${i}x de ${valorParcela.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`;
+        parcelasSelect.add(option);
+    }
+}
+
+function atualizarValorFinal() {
+    const parcelasEscolhidas = parseInt(parcelasSelect.value);
+    const valorParcela = calcularParcelasComJuros(produtoAtual.preco, parcelasEscolhidas);
+    const totalParcelamento = valorParcela * parcelasEscolhidas;
+
+    document.getElementById("valor-total-parcelamento").innerText = `Valor total parcelado: ${totalParcelamento.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`;
+}
+
+function trocarProduto() {
+    produtoAtual = produtos[seletor.value];
+    document.getElementById("produto").innerText = produtoAtual.nome;
+    document.getElementById("preco").innerText = produtoAtual.preco;
+    document.getElementById("preco-vista").innerText = "à vista";
+    document.getElementById("descricao").innerText = produtoAtual.descricao;
+    document.getElementById("imagem").src = produtoAtual.cores[0].imagem;
+
+    // Tags condição
+    const tagsCondicaoDiv = document.getElementById("tags-condicao");
+    tagsCondicaoDiv.innerHTML = "";
+    produtoAtual.condicao.forEach(tag => {
+        let span = document.createElement("span");
+        span.classList.add("tag", "tag-condicao");
+        span.innerText = tag;
+        tagsCondicaoDiv.appendChild(span);
+    });
+
+    // Tags brindes
+    const tagsBrindesDiv = document.getElementById("tags-brindes");
+    tagsBrindesDiv.innerHTML = "";
+    produtoAtual.brindes.forEach(tag => {
+        let span = document.createElement("span");
+        span.classList.add("tag");
+        span.innerText = tag;
+        tagsBrindesDiv.appendChild(span);
+    });
+
+    // Cores
+    const coresDiv = document.getElementById("cores");
+    coresDiv.innerHTML = "";
+    produtoAtual.cores.forEach((c, i) => {
+        let btn = document.createElement("span");
+        btn.classList.add("color-btn");
+        btn.style.background = c.cor;
+        btn.setAttribute("data-nome", c.nome);
+        if (i === 0) btn.classList.add("active");
+        btn.onclick = () => {
+            document.getElementById("imagem").src = c.imagem;
+            document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        };
+        coresDiv.appendChild(btn);
+    });
+
+    atualizarParcelasOptions();
+    atualizarValorFinal();
+
+    const mensagem = `Olá, tenho interesse no ${produtoAtual.nome} (${produtoAtual.preco}) que vi no seu site. Podemos conversar sobre a compra?`;
+    const url = `https://api.whatsapp.com/send?phone=${produtoAtual.wpp}&text=${encodeURIComponent(mensagem)}`;
+    document.getElementById("whatsapp-link").href = url;
+    document.getElementById("whatsapp-float-link").href = url;
+}
+
+trocarProduto();
+parcelasSelect.addEventListener("change", atualizarValorFinal);
+</script>
+
+<footer>
+<p>Siga-nos nas redes sociais</p>
+  <a href="https://www.instagram.com/smartpatchiiashop/" target="_blank"><b>Instagram</b></a>
+  <p>&copy; 2025 Smart Patchiia Shop. <br> Todos os direitos reservados.</p> 
+</footer>
+
+</body>
+</html>
